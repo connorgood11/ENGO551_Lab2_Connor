@@ -7,7 +7,7 @@ db = SQLAlchemy()
 
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, template_folder='templates')
     app.config['SECRET_KEY'] = 'key'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:geomatics@localhost/lab1'
     db.init_app(app)

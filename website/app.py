@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask, request, render_template, flash, redirect, url_for
-from flask_login import login_user
+from flask_login import login_user, login_required, logout_user
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -10,7 +10,6 @@ from werkzeug.security import check_password_hash
 from website import create_app
 from website.database import User
 
-app = Flask(__name__, template_folder='templates')
 app = create_app()
 
 postgre_password = 'geomatics'
@@ -70,6 +69,18 @@ def sign_up():
             flash('Account created!', category='success')
             return render_template('login.html')
     return render_template('signup.html')
+
+
+@app.route('/book_search', methods=['GET', 'POST'])
+@login_required
+def book_search():
+    return render_template('book_search.html')
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return render_template('login.html')
 
 
 if __name__ == '__main__':
