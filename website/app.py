@@ -4,7 +4,7 @@ from flask import Flask, request, render_template, flash, redirect, url_for
 from flask_login import login_user, login_required, logout_user
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import scoped_session, sessionmaker
 from werkzeug.security import check_password_hash
 
@@ -76,7 +76,7 @@ def sign_up():
     return render_template('signup.html')
 
 
-@app.route('/book_search', methods=['GET', 'POST'])
+@app.route('/search', methods=['GET', 'POST'])
 @login_required
 def book_search():
     if request.method == 'POST':
@@ -89,20 +89,23 @@ def book_search():
         query_string = "SELECT * FROM book"
         conditions = []
         if author:
-            conditions.append("author='{}'".format(author))
+            conditions.append("author=:author")
         if title:
-            conditions.append("title='{}'".format(title))
+            conditions.append("title=:title")
         if isbn:
-            conditions.append("isbn='{}'".format(isbn))
+            conditions.append("isbn=:isbn")
         if year:
-            conditions.append("year='{}'".format(year))
+            conditions.append("year=:year")
 
         # Only add the WHERE clause if there are conditions
         if conditions:
-            query_string += " WHERE " + " AND ".join(conditions)
+            query_string += " WHERE " + " OR ".join(conditions)
 
         # Execute the query
-        books = db.execute(query_string).fetchall()
+        books = db.execute(text(query_string), {"author": author, "title": title, "isbn": isbn, "year": year}).fetchall()
+
+        if not books:
+            flash('No books found!')
         return render_template('book_search.html', books=books)
 
     return render_template('book_search.html')

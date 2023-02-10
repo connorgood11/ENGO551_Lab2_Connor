@@ -1,37 +1,61 @@
-{% extends "theme.html" %}
-{% block title %} Login {% endblock %}
-{% block content %}
-<br>
-<h1> Book Search </h1>
-<br>
+<!DOCTYPE html>
 
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale-1" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-<form method="POST">
+  </head>
 
-    <div class="form-group">
-        <label for="userName" > Enter Your Username </h3> </label>
-            <input
-            type="text"
-            class="form-control"
-            id="userName"
-            name="userName"
-            placeholder="Enter Username"
-            />
+  <title>{% block title %}Home{% endblock %}</title>
+
+  <body>
+ <nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <div class="navbar-nav">
+      <a class="nav-item nav-link" id="home" href="/"> Homepage </a>
+      <a class="nav-item nav-link" id="signup" href="/signup"> Sign Up </a>
+      <a class="nav-item nav-link" id="login" href="/login"> Login </a>
+      <a class="nav-item nav-link" id="logout" href="/logout"> Logout </a>
+
     </div>
+  </div>
+  </nav>
 
-    <div class="form-group">
-            <label for="pw"> Enter Your Password </label>
-            <input
-            type="pw"
-            class="form-control"
-            id="pw"
-            name="pw"
-            placeholder="Enter Password"
-            />
-    </div>
-
-        <br>
-        <button type="submit" class="btn btn-primary"> Login </button>
+<form action="/search" method="post">
+      <label for="title">Title:</label>
+      <input type="text" id="title" name="title">
+      <br>
+      <label for="author">Author:</label>
+      <input type="text" id="author" name="author">
+      <br>
+      <label for="isbn">ISBN:</label>
+      <input type="text" id="isbn" name="isbn">
+      <br>
+      <label for="date">Date:</label>
+      <input type="text" id="date" name="isbn">
+      <br>
+      <input type="submit" value="Search">
 </form>
 
-{% endblock %}
+
+<div
+  class="container">
+
+</div>
+
+
+</body>
+
+
+
+
+
+
+
+</html>
