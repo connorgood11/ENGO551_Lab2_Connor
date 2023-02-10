@@ -2,8 +2,6 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
-from flask_session import Session
-from sqlalchemy.orm import scoped_session, sessionmaker
 
 db = SQLAlchemy()
 
