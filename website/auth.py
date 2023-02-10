@@ -1,5 +1,4 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from flask_session import Session
 from .database import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
@@ -17,7 +16,7 @@ def login():
 
         userName = User.query.filter_by(userName=userName).first()
         if userName:
-            if session['logged_in'] = True:
+            if check_password_hash(userName.pw, pw):
                 flash('Logged in successfully!', category='success')
                 login_user(userName, remember=True)
                 return redirect(url_for('views.homepage'))
@@ -27,8 +26,6 @@ def login():
             flash('Email does not exist.', category='error')
 
     return render_template("login.html", user=current_user)
-
-
 
 @auth.route('/logout')
 @login_required
