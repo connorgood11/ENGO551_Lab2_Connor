@@ -6,10 +6,10 @@ from flask_login import LoginManager
 db = SQLAlchemy()
 
 
-def create_app():
+def create_app(password):
     app = Flask(__name__, template_folder='templates')
     app.config['SECRET_KEY'] = 'key'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:geomatics@localhost/lab1'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:' + str(password) + '@localhost/lab1'
     db.init_app(app)
 
     from .views import views
