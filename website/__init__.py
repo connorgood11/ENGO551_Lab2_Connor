@@ -11,7 +11,7 @@ db = SQLAlchemy()
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'key'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234@localhost/lab1'
+    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1234@localhost/db"
     db.init_app(app)
 
     from .views import views
@@ -37,6 +37,6 @@ def create_app():
 
 
 def create_database(app):
-    if not path.exists('website/' + lab1):
+    if not path.exists('website/' + db):
         db.create_all(app=app)
         print('Created Database!')
