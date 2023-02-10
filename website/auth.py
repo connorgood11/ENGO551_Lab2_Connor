@@ -4,7 +4,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 from flask_login import login_user, login_required, logout_user, current_user
 
-
 auth = Blueprint('auth', __name__)
 
 
@@ -14,7 +13,7 @@ def login():
         userName = request.form.get('userName')
         pw = request.form.get('pw')
 
-        userName = User.query.filter_by(userName=userName).first()
+        #userName = User.query.filter_by(userName=userName).first()
         if userName:
             if check_password_hash(userName.pw, pw):
                 flash('Logged in successfully!', category='success')
@@ -27,11 +26,13 @@ def login():
 
     return render_template("login.html", user=current_user)
 
+
 @auth.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
+
 
 @auth.route('/sign_up', methods=['GET', 'POST'])
 def sign_up():
@@ -40,19 +41,17 @@ def sign_up():
         pw = request.form.get('pw')
         pw2 = request.form.get('pw2')
 
-        userName = User.query.filter_by(userName=userName).first()
-        if userName:
+        firstUsernameBoolean = User.query.filter_by(userName=userName).first()
+        if firstUsernameBoolean:
             flash('username already exists.', category='error')
+            print("username already exists")
 
         else:
-            new_user = User(userName=userName, pw=generate_password_hash(pw, method='sha256'))
+            new_user = User(userName=userName, pw=pw)
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user, remember=True)
             flash('Account created!', category='success')
             return redirect(url_for('views.homepage'))
 
-
     return render_template("sign_up.html", user=current_user)
-
-
