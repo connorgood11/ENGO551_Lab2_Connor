@@ -38,6 +38,7 @@ def login_page():
             print('Username Exists')
             if queryUsername.pw == pw:
                 print('Password Correct')
+                return render_template('book_search.html')
             else:
                 print('Password incorrect')
         else:
