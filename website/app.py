@@ -41,6 +41,7 @@ def login_page():
             if queryUsername.pw == pw:
                 print('Password Correct')
                 # session['logged_in'] = True
+                login_user(User(userName=userName, pw=pw), remember=True)
                 return render_template('book_search.html')
             else:
                 print('Password incorrect')
@@ -85,12 +86,12 @@ def sign_up():
             db.commit()
             login_user(new_user, remember=True)
             flash('Account created!', category='success')
-            return render_template('login.html')
+            return render_template('book_search.html')
     return render_template('signup.html')
 
 
 @app.route('/search', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def book_search():
     if request.method == 'POST':
         author = request.form.get('author')
@@ -101,6 +102,7 @@ def book_search():
         # Build the query string based on the form inputs
         query_string = "SELECT * FROM books"
         conditions = []
+        print(author)
         if author:
             conditions.append("author LIKE :author")
         if title:
@@ -108,15 +110,15 @@ def book_search():
         if isbn:
             conditions.append("isbn LIKE :isbn")
         if year:
-            conditions.append("year LIKE :year")
+            conditions.append("year = " + str(year))
 
         # Only add the WHERE clause if there are conditions
         if conditions:
-            query_string += " WHERE " + " OR ".join(conditions)
+            query_string += " WHERE " + " AND ".join(conditions)
 
         # Execute the query
         print(query_string)
-        books = db.execute(text(query_string), {"author": f'%{author}%', "title": f'%{title}%', "isbn": f'%{isbn}%', "year": f'%{year}%'}).fetchall()
+        books = db.execute(text(query_string), {"author": f'%{author}%', "title": f'%{title}%', "isbn": f'%{isbn}%', "year": {year}}).fetchall()
         print(books)
         if not books:
             flash('No books found!')
