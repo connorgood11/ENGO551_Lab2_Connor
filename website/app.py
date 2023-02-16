@@ -1,4 +1,5 @@
 import os
+from functools import wraps
 
 from flask import Flask, request, render_template, flash, redirect, url_for
 from flask_login import login_user, login_required, logout_user
@@ -26,6 +27,7 @@ engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 session = db()
 
+
 # Default Page
 @app.route('/login', methods=['GET', 'POST'])
 def login_page():
@@ -38,6 +40,7 @@ def login_page():
             print('Username Exists')
             if queryUsername.pw == pw:
                 print('Password Correct')
+                # session['logged_in'] = True
                 return render_template('book_search.html')
             else:
                 print('Password incorrect')
@@ -45,6 +48,16 @@ def login_page():
             print('Username doesnt exist')
 
     return render_template('login.html')
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('logged_in'):
+            return redirect(url_for('login_page'))
+        return f(*args, **kwargs)
+
+    return decorated_function
 
 
 @app.route('/')
@@ -77,7 +90,7 @@ def sign_up():
 
 
 @app.route('/search', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def book_search():
     if request.method == 'POST':
         author = request.form.get('author')
@@ -86,24 +99,25 @@ def book_search():
         year = request.form.get('year')
 
         # Build the query string based on the form inputs
-        query_string = "SELECT * FROM book"
+        query_string = "SELECT * FROM books"
         conditions = []
         if author:
-            conditions.append("author=:author")
+            conditions.append("author LIKE :author")
         if title:
-            conditions.append("title=:title")
+            conditions.append("title LIKE :title")
         if isbn:
-            conditions.append("isbn=:isbn")
+            conditions.append("isbn LIKE :isbn")
         if year:
-            conditions.append("year=:year")
+            conditions.append("year LIKE :year")
 
         # Only add the WHERE clause if there are conditions
         if conditions:
             query_string += " WHERE " + " OR ".join(conditions)
 
         # Execute the query
-        books = db.execute(text(query_string), {"author": author, "title": title, "isbn": isbn, "year": year}).fetchall()
-
+        print(query_string)
+        books = db.execute(text(query_string), {"author": f'%{author}%', "title": f'%{title}%', "isbn": f'%{isbn}%', "year": f'%{year}%'}).fetchall()
+        print(books)
         if not books:
             flash('No books found!')
         return render_template('book_search.html', books=books)
